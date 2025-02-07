@@ -147,6 +147,9 @@ config/config.json
 .prisma/client/
 generated/
 
+requests.rest
+*-firebase-adminsdk-*.json
+
 # --------------------------------------------------
 # Debug/Misc
 # --------------------------------------------------

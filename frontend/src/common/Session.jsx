@@ -1,9 +1,16 @@
-import React from 'react'
-
-const Session = () => {
-  return (
-    <div>Session</div>
-  )
+const storeInSession = (key, value) => {
+  return sessionStorage.setItem(key, value)
+}
+const lookInSession = (key) => {
+  return sessionStorage.getItem(key)
 }
 
-export default Session
+const removeFromSession = (key) => {
+  return sessionStorage.removeItem(key)
+}
+
+const logOutUser = (key) => {
+  sessionStorage.clear()
+}
+
+export { storeInSession, lookInSession, removeFromSession, logOutUser }
