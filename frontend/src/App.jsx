@@ -4,6 +4,7 @@ import Navbar from './components/Navbar';
 import UserAuthForm from './pages/UserAuthForm';
 import { createContext, useEffect, useState } from 'react';
 import { lookInSession } from './common/Session';
+import Editor from './pages/Editor';
 
 
 export const UserContext = createContext({})
@@ -21,15 +22,14 @@ const App = () => {
     return (
         <UserContext.Provider value={{ userAuth, setUserAuth }}>
             <Routes>
-                {/* home router navbar to show on all pages  */}
+                <Route path="/editor" element={<Editor />} />
+                {/* home router navbar to show on all pages */}
                 <Route path="/" element={<Navbar />}>
                     <Route path="signin" element={<UserAuthForm type="sign-in" />} />
                     <Route path="signup" element={<UserAuthForm type="sign-up" />} />
                 </Route>
             </Routes>
         </UserContext.Provider>
-
-
     )
 }
 

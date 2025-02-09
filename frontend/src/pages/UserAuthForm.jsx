@@ -34,7 +34,7 @@ const UserAuthForm = ({ type }) => {
             })
     }
 
-    const handelSubmit = (e) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
 
         let serverRoute = type == "sign-in" ? "/signin" : "/signup";
@@ -71,7 +71,7 @@ const UserAuthForm = ({ type }) => {
         userAuthThroughServer(serverRoute, formData);
     };
 
-    const handelGoogleAuth = async (e) => {
+    const handleGoogleAuth = async (e) => {
         e.preventDefault();
 
         authWithGoogle().then((user) => {
@@ -82,8 +82,8 @@ const UserAuthForm = ({ type }) => {
 
             userAuthThroughServer(serverRoute, formData);
         }).catch((error) => {
-            toast.error('trouble login through google');
-            return console.log(error);
+            toast.error('Trouble logging in through Google');
+            console.log(error);
         });
     };
 
@@ -121,7 +121,7 @@ const UserAuthForm = ({ type }) => {
 
                         <button className='btn-dark center mt-14'
                             type="submit"
-                            onClick={handelSubmit}>
+                            onClick={handleSubmit}>
                             {type.replace("-", " ")}
                         </button>
 
@@ -132,7 +132,7 @@ const UserAuthForm = ({ type }) => {
                         </div>
 
                         <button className='btn-dark flex items-center justify-center gap-4 w-[90%] center'
-                            onClick={handelGoogleAuth}>
+                            onClick={handleGoogleAuth}>
                             <img src={googleicon} className='w-5 ' />
                             continue with google
                         </button>
