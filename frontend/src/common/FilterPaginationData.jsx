@@ -1,9 +1,15 @@
-import React from 'react'
+export const filterPaginationData = ({
+  create_new_arr = false,
+  state,
+  data,
+  page,
+  countRoute,
+  data_to_send,
+}) => {
+  let obj;
 
-const FilterPaginationData = () => {
-  return (
-    <div>FilterPaginationData</div>
-  )
-}
-
-export default FilterPaginationData
+  if (state != null && !create_new_arr) {
+    obj = { ...state, results: [...state.results, ...data], page: page };
+  } else {
+  }
+};

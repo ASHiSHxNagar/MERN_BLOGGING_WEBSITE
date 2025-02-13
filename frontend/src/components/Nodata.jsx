@@ -1,9 +1,11 @@
-import React from 'react'
+import React from "react";
 
-const Nodata = () => {
+const Nodata = ({ message }) => {
   return (
-    <div>Nodata</div>
-  )
-}
+    <div className="text-center w-full p-4 rounded-full bg-grey/50 mt-4">
+      <p>{message}</p>
+    </div>
+  );
+};
 
-export default Nodata
+export default Nodata;

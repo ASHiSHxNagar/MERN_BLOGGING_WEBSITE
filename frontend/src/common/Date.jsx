@@ -1,9 +1,9 @@
-import React from 'react'
+let months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+let days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
 
-const Date = () => {
-  return (
-    <div>Date</div>
-  )
+const getDay = (timestamp) => {
+  let date = new Date(timestamp)
+  return `${date.getDate()} ${months[date.getMonth()]}`
 }
 
-export default Date
+export default getDay

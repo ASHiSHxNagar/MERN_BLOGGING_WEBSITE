@@ -111,10 +111,10 @@ const PublishForm = () => {
           <div className='w-full aspect-video rounded-lg overflow-hidden bg-grey mt-4'>
             <img src={banner} />
           </div>
+          <h1 className='text-4xl font-medium mt-2 leading-tight line-clamp-2'>{title}</h1>
+          <p className='font-gelasio line-clamp-2 text-xl leading-7 mt-4 '>{des}</p>
         </div>
 
-        <h1 className='text-4xl font-medium mt-2 leading-tight line-clamp-2'>{title}</h1>
-        <p className='font-gelasio line-clamp-2 text-xl leading-7 mt-4 '>{des}</p>
 
         <div className='border-grey lg:border-1 lg:pl-8'>
           <p className='text-dark-grey mb-2 mt-9'>Blog Title</p>
