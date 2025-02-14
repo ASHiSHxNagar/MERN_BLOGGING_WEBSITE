@@ -1,6 +1,5 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import getDay from "../common/Date";
 
 const MinimalBlogPost = ({ content2, index }) => {
   let {
