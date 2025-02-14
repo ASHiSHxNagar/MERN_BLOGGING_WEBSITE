@@ -27,6 +27,12 @@ mongoose.connect(process.env.MONGO_URI, {
 app.use(express.json());
 app.use(cors());
 
+// Set COOP header
+app.use((req, res, next) => {
+    res.setHeader('Cross-Origin-Opener-Policy', 'same-origin');
+    next();
+});
+
 // setting up s3 bucket
 const s3 = new aws.S3({
     region: 'eu-north-1',
