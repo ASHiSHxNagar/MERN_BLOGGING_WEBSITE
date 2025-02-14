@@ -7,6 +7,7 @@ import { lookInSession } from "./common/Session";
 import Editor from "./pages/Editor";
 import HomePage from "./pages/Home";
 import Search from "./pages/Search";
+import PageNotFound from "./pages/404";
 
 export const UserContext = createContext({});
 
@@ -31,6 +32,8 @@ const App = () => {
           <Route path="signin" element={<UserAuthForm type="sign-in" />} />
           <Route path="signup" element={<UserAuthForm type="sign-up" />} />
           <Route path="search/:query" element={<Search />} />
+          {/* // put * path at very end so we can show error page on not exist path */}
+          <Route path="*" element={<PageNotFound />} />
         </Route>
       </Routes>
     </UserContext.Provider>
