@@ -5,6 +5,12 @@ import PageAnimation from "../common/PageAnimation";
 import Loader from "../components/Loader";
 import { UserContext } from "../App";
 import About from "../components/About";
+import filterPaginationData from "../common/FilterPaginationData";
+import InpageNavigation from "../components/InpageNavigation";
+import Blog from "./Blog";
+import Nodata from "../components/Nodata";
+import LoadMore from "../components/LoadMore";
+import PageNotFound from "./404";
 
 export const profileDataStructure = {
   personal_info: {
@@ -27,7 +33,8 @@ const Profile = () => {
   let [profile, setProfile] = useState(profileDataStructure);
 
   let [loading, setLoading] = useState(true);
-
+  let [blogs, setBlogs] = useState(null);
+  let [profileLoaded, setProfileLoaded] = useState("");
   let {
     personal_info: { fullname, username: profile_username, profile_img, bio },
     account_info: { total_posts, total_reads },
@@ -45,7 +52,11 @@ const Profile = () => {
         username: profileId,
       })
       .then(({ data: user }) => {
-        setProfile(user);
+        if (user != null) {
+          setProfile(user);
+        }
+        setProfileLoaded(profileId);
+        getBlogs({ user_id: user._id }); // Corrected user_id
         setLoading(false);
       })
       .catch((err) => {
@@ -54,23 +65,53 @@ const Profile = () => {
       });
   };
 
+  const getBlogs = ({ page = 1, user_id }) => {
+    user_id = user_id == undefined ? blogs.user_id : user_id;
+
+    axios
+      .post(import.meta.env.VITE_SERVER_DOMAIN + "/search-blogs", {
+        author: user_id,
+        page,
+      })
+      .then(async ({ data }) => {
+        let formattedData = await filterPaginationData({
+          state: blogs,
+          data: data.blogs,
+          page,
+          countRoute: "/search-blogs-count",
+          data_to_send: { author: user_id },
+        });
+
+        formattedData.user_id = user_id;
+
+        setBlogs(formattedData);
+      });
+  };
+
   const resetStates = () => {
     setProfile(profileDataStructure);
     setLoading(true);
+    setProfileLoaded("");
   };
 
   useEffect(() => {
-    resetStates();
-    fetchUserProfile();
-  }, [profileId]);
+    if (profileId != profileLoaded) {
+      setBlogs(null);
+    }
+
+    if (blogs == null) {
+      resetStates();
+      fetchUserProfile();
+    }
+  }, [profileId, blogs]);
 
   return (
     <PageAnimation>
       {loading ? (
         <Loader />
-      ) : (
+      ) : profile_username.length ? (
         <section className="h-cover md:flex flex-row-reverse items-start gap-5 min-[1100px]:gap-12">
-          <div className="flex flex-col max-md:items-center gap-5 min-w-[250px]">
+          <div className="flex flex-col max-md:items-center gap-5 min-w-[250px]  md:w-[50%] md:pl-8 md:border-l border-grey md:sticky  md:top-[100px] md:py-10">
             <img
               src={profile_img}
               className="w-40 h-40 bg-grey rounded-full md:w-32 md:h-32"
@@ -102,7 +143,45 @@ const Profile = () => {
               joinedAt={joinedAt}
             />
           </div>
+
+          <div className="max-md:mt-12 w-full">
+            <InpageNavigation
+              routes={["Blogs Published", "About"]}
+              defaultHidden={["About"]}
+            >
+              <>
+                {blogs == null ? (
+                  <Loader />
+                ) : blogs.results.length ? (
+                  blogs.results.map((blog, i) => {
+                    return (
+                      <PageAnimation
+                        key={i}
+                        transition={{ duration: 1, delay: i * 0.1 }}
+                      >
+                        <Blog
+                          content={blog}
+                          author={blog.author.personal_info}
+                        />
+                      </PageAnimation>
+                    );
+                  })
+                ) : (
+                  <Nodata message="No blogs found" />
+                )}
+                <LoadMore state={blogs} fetchDataFun={getBlogs} />
+              </>
+
+              <About
+                bio={bio}
+                social_links={social_links}
+                joinedAt={joinedAt}
+              />
+            </InpageNavigation>
+          </div>
         </section>
+      ) : (
+        <PageNotFound />
       )}
     </PageAnimation>
   );

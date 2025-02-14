@@ -33,10 +33,8 @@ const Navbar = () => {
     }
   };
 
-  const {
-    userAuth,
-    userAuth: { access_token, profile_img },
-  } = useContext(UserContext);
+  const { userAuth } = useContext(UserContext); // Corrected userAuth retrieval
+  const { access_token, profile_img } = userAuth;
 
   return (
     <>
