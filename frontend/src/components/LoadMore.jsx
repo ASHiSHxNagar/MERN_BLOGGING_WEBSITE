@@ -11,6 +11,7 @@ const LoadMore = ({ state, fetchDataFun }) => {
       </button>
     );
   }
+  return null;
 };
 
 export default LoadMore;

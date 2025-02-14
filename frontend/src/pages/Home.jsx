@@ -43,13 +43,21 @@ const HomePage = () => {
       });
   };
 
-  const fetchBlogsByCategory = () => {
+  const fetchBlogsByCategory = ({ page = 1 }) => {
     axios
       .post(import.meta.env.VITE_SERVER_DOMAIN + "/search-blogs", {
         tag: pageState,
+        page,
       })
-      .then(({ data }) => {
-        setBlogs(data.blogs);
+      .then(async ({ data }) => {
+        let formattedData = await filterPaginationData({
+          state: blogs,
+          data: data.blogs,
+          page,
+          countRoute: "/search-blogs-count",
+          data_to_send: { tag: pageState },
+        });
+        setBlogs(formattedData);
       })
       .catch((err) => {
         console.log(err);
@@ -83,7 +91,7 @@ const HomePage = () => {
     if (pageState === "home") {
       fetchLatestBlogs({ page: 1 });
     } else {
-      fetchBlogsByCategory();
+      fetchBlogsByCategory({ page: 1 });
     }
     if (!trendingBlogs) {
       fetchTrendingBlogs();
@@ -115,7 +123,12 @@ const HomePage = () => {
               ) : (
                 <Nodata message="No blogs found" />
               )}
-              <LoadMore state={blogs} fetchDataFun={fetchLatestBlogs} />
+              <LoadMore
+                state={blogs}
+                fetchDataFun={
+                  pageState == "home" ? fetchLatestBlogs : fetchBlogsByCategory
+                }
+              />
             </>
             {trendingBlogs == null ? (
               <Loader />
