@@ -4,9 +4,11 @@ import InpageNavigation from "../components/InpageNavigation";
 import axios from "axios";
 import Loader from "../components/Loader";
 import Blog from "./Blog";
-import MinimalBlogPost from "../components/NobanneBlogPost";
+import MinimalBlogPost from "../components/MinimalBlogPost";
 import { activeTabLineRef, activeTabRef } from "../components/InpageNavigation";
 import Nodata from "../components/Nodata";
+import filterPaginationData from "../common/FilterPaginationData";
+import LoadMore from "../components/LoadMore";
 
 const HomePage = () => {
   let [blogs, setBlogs] = useState(null);
@@ -24,17 +26,23 @@ const HomePage = () => {
     "girl",
   ];
 
-  const fetchLatestBlogs = (page = 1) => {
+  const fetchLatestBlogs = ({ page = 1 }) => {
     axios
       .post(import.meta.env.VITE_SERVER_DOMAIN + "/latest-blogs", { page })
-      .then(({ data }) => {
-        // let formatData =
-        // setBlogs(data.blogs);
+      .then(async ({ data }) => {
+        let formattedData = await filterPaginationData({
+          state: blogs,
+          data: data.blogs,
+          page,
+          countRoute: "/all-latest-blogs-count",
+        });
+        setBlogs(formattedData);
       })
       .catch((err) => {
         console.log(err);
       });
   };
+
   const fetchBlogsByCategory = () => {
     axios
       .post(import.meta.env.VITE_SERVER_DOMAIN + "/search-blogs", {
@@ -47,6 +55,7 @@ const HomePage = () => {
         console.log(err);
       });
   };
+
   const fetchTrendingBlogs = () => {
     axios
       .get(import.meta.env.VITE_SERVER_DOMAIN + "/trending-blogs")
@@ -62,7 +71,7 @@ const HomePage = () => {
     let category = e.target.innerText.toLowerCase();
 
     setBlogs(null);
-    if (pageState == category) {
+    if (pageState === category) {
       setPageState("home");
       return;
     }
@@ -71,8 +80,8 @@ const HomePage = () => {
 
   useEffect(() => {
     activeTabRef.current.click();
-    if (pageState == "home") {
-      fetchLatestBlogs();
+    if (pageState === "home") {
+      fetchLatestBlogs({ page: 1 });
     } else {
       fetchBlogsByCategory();
     }
@@ -92,8 +101,8 @@ const HomePage = () => {
             <>
               {blogs == null ? (
                 <Loader />
-              ) : blogs.length ? (
-                blogs.map((blog, i) => {
+              ) : blogs.results.length ? (
+                blogs.results.map((blog, i) => {
                   return (
                     <PageAnimation
                       key={i}
@@ -106,6 +115,7 @@ const HomePage = () => {
               ) : (
                 <Nodata message="No blogs found" />
               )}
+              <LoadMore state={blogs} fetchDataFun={fetchLatestBlogs} />
             </>
             {trendingBlogs == null ? (
               <Loader />
@@ -140,7 +150,7 @@ const HomePage = () => {
                       key={i}
                       className={
                         "tag " +
-                        (pageState == category ? "bg-black text-white" : " ")
+                        (pageState === category ? "bg-black text-white" : " ")
                       }
                     >
                       {category}
