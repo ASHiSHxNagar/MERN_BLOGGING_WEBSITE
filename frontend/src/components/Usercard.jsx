@@ -1,9 +1,20 @@
-import React from 'react'
+import React from "react";
+import { Link } from "react-router-dom";
 
-const Usercard = () => {
+const Usercard = ({ user }) => {
+  let {
+    personal_info: { fullname, username, profile_img },
+  } = user;
   return (
-    <div>Usercard</div>
-  )
-}
+    <Link to={`/user/${username}`} className="flex gap-5 items-center mb-5">
+      <img src={profile_img} className="w-14 h-14 rounded-full" />
 
-export default Usercard
+      <div>
+        <h1 className="font-medium text-xl line-clamp-2">{fullname}</h1>
+        <p className="text-dark-grey">@{username}</p>
+      </div>
+    </Link>
+  );
+};
+
+export default Usercard;
