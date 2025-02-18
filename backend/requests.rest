@@ -1,2 +1,7 @@
 
-# POST http://localhost:3000/search-blog
+POST http://localhost:3000/get-blog 
+Content-Type: application/json
+
+{
+    "blog_id": "ChineseSunwithAiT_AyS8vNE-GAVKULxvBCI"
+}

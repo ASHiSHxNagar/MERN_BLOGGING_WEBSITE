@@ -7,7 +7,7 @@ import PublishForm from '../components/PublishForm'
 const blogsStructure = {
     title: "",
     banner: "",
-    content: [],
+    content: [], // Ensure this is correctly initialized
     tags: [],
     des: "",
     author: { personal_info: {} }

@@ -1,7 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 
-const blogSchema = mongoose.Schema({
-
+const blogSchema = new Schema({
     blog_id: {
         type: String,
         required: true,
@@ -13,20 +12,16 @@ const blogSchema = mongoose.Schema({
     },
     banner: {
         type: String,
-        // required: true,
     },
     des: {
         type: String,
         maxlength: 200,
-        // required: true
     },
     content: {
-        type: [],
-        // required: true
+        type: mongoose.Schema.Types.Mixed,
     },
     tags: {
         type: [String],
-        // required: true
     },
     author: {
         type: Schema.Types.ObjectId,
@@ -59,13 +54,10 @@ const blogSchema = mongoose.Schema({
         type: Boolean,
         default: false
     }
-
-}, 
-{ 
+}, {
     timestamps: {
         createdAt: 'publishedAt'
-    } 
-
-})
+    }
+});
 
 export default mongoose.model("blogs", blogSchema);

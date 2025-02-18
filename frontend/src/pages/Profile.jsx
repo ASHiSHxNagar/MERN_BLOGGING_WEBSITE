@@ -7,7 +7,7 @@ import { UserContext } from "../App";
 import About from "../components/About";
 import filterPaginationData from "../common/FilterPaginationData";
 import InpageNavigation from "../components/InpageNavigation";
-import Blog from "./Blog";
+import Blog from "../components/Blog";
 import Nodata from "../components/Nodata";
 import LoadMore from "../components/LoadMore";
 import PageNotFound from "./404";

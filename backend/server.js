@@ -251,11 +251,11 @@ app.get('/trending-blogs', (req, res) => {
 });
 
 app.post('/search-blogs', (req, res) => {
-    let { tag, author, page, query } = req.body;
+    let { tag, author, page, query, limit, eliminate_blog } = req.body;
     let findQuery
 
     if (tag) {
-        findQuery = { tags: tag, draft: false };
+        findQuery = { tags: tag, draft: false, blog_id: { $ne: eliminate_blog } };
     }
     else if (query) {
         findQuery = { draft: false, title: new RegExp(query, 'i') }
@@ -263,7 +263,7 @@ app.post('/search-blogs', (req, res) => {
     else if (author) {
         findQuery = { author, draft: false }
     }
-    let maxLimit = 2;
+    let maxLimit = limit ? limit : 2;
     Blog.find(findQuery)
         .populate('author', 'personal_info.profile_img personal_info.username personal_info.fullname -_id')
         .sort({ "publishedAt": -1 })
@@ -344,9 +344,6 @@ app.post('/create-blog', verifyJWT, (req, res) => {
         if (!banner.length) {
             return res.status(403).json({ "error": "Banner is required" });
         }
-        if (!content.blocks.length) {
-            return res.status(403).json({ "error": "Content is required to publish the blog" });
-        }
         if (!tags.length || tags.length > 10) {
             return res.status(403).json({ "error": "Tags are required, Maximum 10" });
         }
@@ -358,6 +355,7 @@ app.post('/create-blog', verifyJWT, (req, res) => {
     let newBlog = new Blog({
         title,
         des,
+        content,
         banner,
         tags,
         author: authorId,
@@ -376,6 +374,25 @@ app.post('/create-blog', verifyJWT, (req, res) => {
         .catch(err => { return res.status(500).json({ "error": err.message }); });
 });
 
-app.listen(PORT, (req, res) => {
+app.post('/get-blog', (req, res) => {
+    let { blog_id } = req.body;
+
+    let incrementVal = 1;
+
+    Blog.findOneAndUpdate({ blog_id }, { $inc: { "activity.total_reads": incrementVal } })
+        .populate('author', 'personal_info.fullname personal_info.username personal_info.profile_img')
+        .select("title des content banner activity publishedAt blog_id tags")
+        .then(blog => {
+
+            User.findOneAndUpdate({ "personal_info.username": blog.author.personal_info.username }, { $inc: { "account_info.total_reads": incrementVal } })
+                .catch(err => res.status(500).json({ "error": err.message }));
+
+            return res.status(200).json({ blog });
+        }).catch(err => {
+            return res.status(500).json({ "error": err.message });
+        });
+})
+
+app.listen(PORT, () => {
     console.log('listening at port ', PORT);
 });

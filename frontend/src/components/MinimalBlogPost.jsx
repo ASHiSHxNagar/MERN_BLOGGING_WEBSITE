@@ -1,7 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { getDay } from "../common/Date";
 
-const MinimalBlogPost = ({ content2, index }) => {
+const MinimalBlogPost = ({ content, index }) => {
   let {
     title,
     blog_id: id,
@@ -9,35 +10,7 @@ const MinimalBlogPost = ({ content2, index }) => {
       personal_info: { fullname, username, profile_img },
     },
     publishedAt,
-  } = content2;
-
-  const datefunc = (timestamp) => {
-    let months = [
-      "Jan",
-      "Feb",
-      "Mar",
-      "Apr",
-      "May",
-      "Jun",
-      "Jul",
-      "Aug",
-      "Sep",
-      "Oct",
-      "Nov",
-      "Dec",
-    ];
-    let days = [
-      "Sunday",
-      "Monday",
-      "Tuesday",
-      "Wednesday",
-      "Thursday",
-      "Friday",
-      "Saturday",
-    ];
-    let date = new Date(timestamp);
-    return `${date.getDate()} ${months[date.getMonth()]}`;
-  };
+  } = content;
 
   return (
     <Link to={`/blog/${id}`} className="flex gap-5 mb-8">
@@ -48,7 +21,7 @@ const MinimalBlogPost = ({ content2, index }) => {
           <p className="line-clamp-1">
             {fullname} @ {username}
           </p>
-          <p className="min-w-fit">{datefunc(content2.publishedAt)}</p>
+          <p className="min-w-fit">{getDay(publishedAt)}</p>
         </div>
         <h1 className="blog-title ml-5 "> {title}</h1>
       </div>

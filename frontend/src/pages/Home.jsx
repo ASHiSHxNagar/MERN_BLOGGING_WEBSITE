@@ -3,7 +3,7 @@ import PageAnimation from "../common/PageAnimation";
 import InpageNavigation from "../components/InpageNavigation";
 import axios from "axios";
 import Loader from "../components/Loader";
-import Blog from "./Blog";
+import Blog from "../components/Blog";
 import MinimalBlogPost from "../components/MinimalBlogPost";
 import { activeTabLineRef, activeTabRef } from "../components/InpageNavigation";
 import Nodata from "../components/Nodata";
@@ -96,7 +96,7 @@ const HomePage = () => {
     if (!trendingBlogs) {
       fetchTrendingBlogs();
     }
-  }, [pageState]);
+  }, [pageState, trendingBlogs]);
 
   return (
     <PageAnimation>
@@ -139,7 +139,7 @@ const HomePage = () => {
                     key={i}
                     transition={{ duration: 1, delay: i * 0.1 }}
                   >
-                    <MinimalBlogPost content2={blog} index={i} />
+                    <MinimalBlogPost content={blog} index={i} />
                   </PageAnimation>
                 );
               })
@@ -187,7 +187,7 @@ const HomePage = () => {
                     key={i}
                     transition={{ duration: 1, delay: i * 0.1 }}
                   >
-                    <MinimalBlogPost content2={blog} index={i} />
+                    <MinimalBlogPost content={blog} index={i} />
                   </PageAnimation>
                 );
               })

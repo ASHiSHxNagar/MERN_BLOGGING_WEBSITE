@@ -1,9 +1,66 @@
-import React from 'react'
+import React from "react";
+import { useContext } from "react";
+import { BlogContext } from "../pages/BlogPage";
+import { Link } from "react-router-dom";
+import { UserContext } from "../App";
 
 const BlogInteraction = () => {
-    return (
-        <div>BlogInteraction</div>
-    )
-}
+  let {
+    blog: {
+      blog_id,
+      activity,
+      title,
+      activity: { total_likes, total_comments },
+      author: {
+        personal_info: { username: author_username },
+      },
+    },
+    setBlog,
+  } = useContext(BlogContext);
 
-export default BlogInteraction
+  let {
+    userAuth: { username },
+  } = useContext(UserContext);
+  return (
+    <>
+      <hr className="border-grey my-2" />
+      <div className="flex gap-6 justify-between">
+        <div className="flex gap-3 items-center">
+          <button className="w-10 h-10 rounded-full flex items-center justify-center bg-grey/80">
+            <i className=" fi fi-rr-heart"></i>
+          </button>
+          <p className="text-xl text-dark-grey">{total_likes}</p>
+
+          <button className="w-10 h-10 rounded-full flex items-center justify-center bg-grey/80">
+            <i className=" fi fi-rr-comment-dots"></i>
+          </button>
+          <p className="text-xl text-dark-grey">{total_comments}</p>
+        </div>
+
+        <div className="flex gap-6 items-center">
+          {username === author_username ? (
+            <Link
+              to={`/editor/${blog_id}`}
+              className="underline hover:text-purple"
+            >
+              Edit
+            </Link>
+          ) : (
+            ""
+          )}
+
+          <a
+            href={`https://twitter.com/intent/tweet?text=Read ${encodeURIComponent(title)}&url=${encodeURIComponent(window.location.href)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <i className="fi fi-brands-twitter text-xl hover:text-twitter"></i>
+          </a>
+        </div>
+      </div>
+      <hr className="border-grey my-2" />
+    </>
+  );
+};
+
+export default BlogInteraction;

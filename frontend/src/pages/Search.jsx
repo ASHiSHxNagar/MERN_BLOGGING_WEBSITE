@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import InpageNavigation from "../components/InpageNavigation";
 import Loader from "../components/Loader";
 import PageAnimation from "../common/PageAnimation";
-import Blog from "./Blog";
+import Blog from "../components/Blog";
 import Nodata from "../components/Nodata";
 import LoadMore from "../components/LoadMore";
 import { useState } from "react";

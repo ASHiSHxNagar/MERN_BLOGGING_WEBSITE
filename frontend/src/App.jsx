@@ -9,6 +9,7 @@ import HomePage from "./pages/Home";
 import Search from "./pages/Search";
 import PageNotFound from "./pages/404";
 import Profile from "./pages/Profile";
+import BlogPage from "./pages/BlogPage";
 
 export const UserContext = createContext({});
 
@@ -34,6 +35,7 @@ const App = () => {
           <Route path="signup" element={<UserAuthForm type="sign-up" />} />
           <Route path="search/:query" element={<Search />} />
           <Route path="user/:id" element={<Profile />} />
+          <Route path="blog/:blog_id" element={<BlogPage />} />
           {/* // put * path at very end so we can show error page on not exist path */}
           <Route path="*" element={<PageNotFound />} />
         </Route>
