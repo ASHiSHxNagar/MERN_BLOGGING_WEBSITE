@@ -1,17 +1,18 @@
-import express from 'express'
+import express from 'express';
 import mongoose from 'mongoose';
-import 'dotenv/config'
-import bcrypt from 'bcrypt'
+import 'dotenv/config';
+import bcrypt from 'bcrypt';
 import { nanoid } from 'nanoid';
-import jwt from 'jsonwebtoken'
-import cors from 'cors'
-import admin from 'firebase-admin'
-import serviceAccountKey from './mern-blogging-yt-c12b2-firebase-adminsdk-fbsvc-fbdb68d261.json' assert { type: "json" }
-import { getAuth } from 'firebase-admin/auth'
-import aws from 'aws-sdk'
+import jwt from 'jsonwebtoken';
+import cors from 'cors';
+import admin from 'firebase-admin';
+import serviceAccountKey from './mern-blogging-yt-c12b2-firebase-adminsdk-fbsvc-fbdb68d261.json' assert { type: "json" };
+import { getAuth } from 'firebase-admin/auth';
+import aws from 'aws-sdk';
 // schema below
-import User from './Schema/User.js'
-import Blog from './Schema/Blog.js'
+import User from './Schema/User.js';
+import Blog from './Schema/Blog.js';
+import Notification from './Schema/Notification.js';
 
 const app = express();
 const PORT = 3000;
@@ -208,6 +209,100 @@ app.post('/google-auth', async (req, res) => {
         });
 });
 
+// route for blog db updation with dummy content
+app.post('/update-tech-blogs-content', async (req, res) => {
+    // Define extra dummy blocks to append for tech blogs
+    const extraDummyBlocks = [
+        {
+            id: "code1",
+            type: "code",
+            data: {
+                code: "console.log('Hello Tech World');"
+            }
+        },
+        {
+            id: "list2",
+            type: "list",
+            data: {
+                style: "ordered",
+                items: [
+                    "Tech tip 1",
+                    "Tech tip 2",
+                    "Tech tip 3"
+                ]
+            }
+        },
+        {
+            id: "quote2",
+            type: "quote",
+            data: {
+                text: "Technology is best when it brings people together.",
+                caption: "Unknown",
+                alignment: "center"
+            }
+        },
+        {
+            id: "paragraph2",
+            type: "paragraph",
+            data: {
+                text: "Additional information about tech innovations and trends is available here."
+            }
+        }
+    ];
+
+    try {
+        // Find all blogs whose tags array includes "tech"
+        const blogs = await Blog.find({ tags: { $in: ["tech"] } });
+
+        for (let blog of blogs) {
+            // Build base blocks using blog's own data
+            const baseBlocks = [
+                {
+                    id: "header1",
+                    type: "header",
+                    data: {
+                        text: blog.title || "Default Title",
+                        level: 2
+                    }
+                },
+                {
+                    id: "paragraph1",
+                    type: "paragraph",
+                    data: {
+                        text: blog.des || "Default description text."
+                    }
+                },
+                {
+                    id: "image1",
+                    type: "image",
+                    data: {
+                        file: {
+                            url: blog.banner || "https://via.placeholder.com/800x400.png?text=Tech+Image"
+                        },
+                        caption: "Featured image",
+                        withBorder: false,
+                        stretched: false,
+                        withBackground: false
+                    }
+                }
+            ];
+
+            // Combine the base blocks with the extra dummy blocks
+            const newBlocks = [...baseBlocks, ...extraDummyBlocks];
+
+            // Update the blog's content so it becomes an array with one object that has a "blocks" property
+            blog.content = [{ blocks: newBlocks }];
+
+            // Save the updated blog document
+            await blog.save();
+        }
+
+        res.status(200).json({ message: "Tech blogs updated with new dummy content", count: blogs.length });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 app.post('/latest-blogs', (req, res) => {
     let { page } = req.body;
 
@@ -235,12 +330,10 @@ app.post("/all-latest-blogs-count", (req, res) => {
         });
 });
 
-
-
 app.get('/trending-blogs', (req, res) => {
     Blog.find({ draft: false })
         .populate('author', 'personal_info.profile_img personal_info.username personal_info.fullname -_id')
-        .sort({ "activity.total_read": -1, "activity.total_likes": -1, "publishedAt": -1 })
+        .sort({ "activity.total_reads": -1, "activity.total_likes": -1, "publishedAt": -1 })
         .select("blog_id title publishedAt -_id")
         .limit(5)
         .then((blogs) => {
@@ -252,16 +345,16 @@ app.get('/trending-blogs', (req, res) => {
 
 app.post('/search-blogs', (req, res) => {
     let { tag, author, page, query, limit, eliminate_blog } = req.body;
-    let findQuery
+    let findQuery;
 
     if (tag) {
         findQuery = { tags: tag, draft: false, blog_id: { $ne: eliminate_blog } };
     }
     else if (query) {
-        findQuery = { draft: false, title: new RegExp(query, 'i') }
+        findQuery = { draft: false, title: new RegExp(query, 'i') };
     }
     else if (author) {
-        findQuery = { author, draft: false }
+        findQuery = { author, draft: false };
     }
     let maxLimit = limit ? limit : 2;
     Blog.find(findQuery)
@@ -278,18 +371,18 @@ app.post('/search-blogs', (req, res) => {
 });
 
 app.post("/search-blogs-count", (req, res) => {
-    let { tag, author, query } = req.body
+    let { tag, author, query } = req.body;
 
-    let findQuery
+    let findQuery;
 
     if (tag) {
         findQuery = { tags: tag, draft: false };
     }
     else if (query) {
-        findQuery = { draft: false, title: new RegExp(query, 'i') }
+        findQuery = { draft: false, title: new RegExp(query, 'i') };
     }
     else if (author) {
-        findQuery = { author, draft: false }
+        findQuery = { author, draft: false };
     }
 
     Blog.countDocuments(findQuery)
@@ -312,8 +405,8 @@ app.post("/search-users", (req, res) => {
         })
         .catch(err => {
             return res.status(500).json({ "error": err.message });
-        })
-})
+        });
+});
 
 app.post("/get-profile", (req, res) => {
     let { username } = req.body;
@@ -325,14 +418,13 @@ app.post("/get-profile", (req, res) => {
         })
         .catch(err => {
             return res.status(500).json({ "error": err.message });
-        })
-})
-
+        });
+});
 
 app.post('/create-blog', verifyJWT, (req, res) => {
     let authorId = req.user;
 
-    let { title, des, banner, tags, content, draft = undefined } = req.body;
+    let { title, des, banner, tags, content, draft = undefined, id } = req.body;
 
     if (!title.length) {
         return res.status(403).json({ "error": "Title is required" });
@@ -351,47 +443,94 @@ app.post('/create-blog', verifyJWT, (req, res) => {
 
     tags = tags.map(tag => tag.toLowerCase());
 
-    let blog_id = title.replace(/[^a-zA-Z0-9]/g, '').replace(/\s+/g, '-').trim() + nanoid();
-    let newBlog = new Blog({
-        title,
-        des,
-        content,
-        banner,
-        tags,
-        author: authorId,
-        blog_id,
-        draft: Boolean(draft),
-    });
-    newBlog.save().then((blog) => {
-        let incrementVal = draft ? 0 : 1;
+    let blog_id = id || title.replace(/[^a-zA-Z0-9]/g, '').replace(/\s+/g, '-').trim() + nanoid();
 
-        User.findOneAndUpdate({ _id: authorId }, { $inc: { "account_info.total_posts": incrementVal }, $push: { "blogs": blog._id } })
-            .then((user) => {
-                return res.status(200).json({ id: blog._id });
+    if (id) {
+        Blog.findOneAndUpdate({ blog_id }, { title, des, content, banner, tags, draft: draft ? draft : false })
+            .then(() => {
+                return res.status(200).json({ id: blog_id });
             })
             .catch(err => res.status(500).json({ "error": err.message }));
-    })
-        .catch(err => { return res.status(500).json({ "error": err.message }); });
+    }
+    else {
+        let newBlog = new Blog({
+            title,
+            des,
+            content,
+            banner,
+            tags,
+            author: authorId,
+            blog_id,
+            draft: Boolean(draft),
+        });
+        newBlog.save().then((blog) => {
+            let incrementVal = draft ? 0 : 1;
+
+            User.findOneAndUpdate({ _id: authorId }, { $inc: { "account_info.total_posts": incrementVal }, $push: { "blogs": blog._id } })
+                .then((user) => {
+                    return res.status(200).json({ id: blog._id });
+                })
+                .catch(err => res.status(500).json({ "error": err.message }));
+        })
+            .catch(err => { return res.status(500).json({ "error": err.message }); });
+    }
+
+
 });
 
 app.post('/get-blog', (req, res) => {
-    let { blog_id } = req.body;
+    let { blog_id, draft, mode } = req.body;
 
-    let incrementVal = 1;
+    let incrementVal = mode != 'edit' ? 1 : 0;
 
     Blog.findOneAndUpdate({ blog_id }, { $inc: { "activity.total_reads": incrementVal } })
         .populate('author', 'personal_info.fullname personal_info.username personal_info.profile_img')
         .select("title des content banner activity publishedAt blog_id tags")
         .then(blog => {
 
-            User.findOneAndUpdate({ "personal_info.username": blog.author.personal_info.username }, { $inc: { "account_info.total_reads": incrementVal } })
+            User.findOneAndUpdate({ "personal_info.username": blog.author.personal_info.username },
+                { $inc: { "account_info.total_reads": incrementVal } })
+
                 .catch(err => res.status(500).json({ "error": err.message }));
 
+            if (blog.draft && !draft) {
+                return res.status(500).json({ error: "you can not access draft blog" });
+            }
             return res.status(200).json({ blog });
-        }).catch(err => {
+        })
+
+        .catch(err => {
             return res.status(500).json({ "error": err.message });
         });
-})
+});
+
+app.post("/liked-blog", verifyJWT, (req, res) => {
+    let { _id, islikedByUser } = req.body;
+    let user_id = req.user;
+
+    let incrementVal = !islikedByUser ? 1 : -1;
+
+    Blog.findOneAndUpdate({ _id }, { $inc: { "activity.total_likes": incrementVal } })
+        .then((blog) => {
+            if (!islikedByUser) {
+                let like = new Notification({
+                    type: "liked",
+                    blog: _id,
+                    notification_for: blog.author,
+                    user: user_id,
+                });
+
+                like.save().then(notification => {
+                    return res.status(200).json({ liked_by_user: true });
+                }).catch(err => {
+                    return res.status(500).json({ "error": err.message });
+                });
+            } else {
+
+            }
+        })
+        .catch(err => res.status(500).json({ "error": err.message }));
+});
 
 app.listen(PORT, () => {
     console.log('listening at port ', PORT);

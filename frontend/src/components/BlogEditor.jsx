@@ -10,6 +10,7 @@ import EditorJS from "@editorjs/editorjs";
 import { Tools } from "../components/Tools";
 import axios from "axios";
 import { UserContext } from "../App";
+import { useParams } from "react-router-dom";
 
 const BlogEditor = () => {
   let {
@@ -20,6 +21,9 @@ const BlogEditor = () => {
     setTextEditor,
     setEditorState,
   } = useContext(EditorContext);
+
+  let { blog_id } = useParams();
+
   let {
     userAuth: { access_token },
   } = useContext(UserContext);
@@ -29,7 +33,7 @@ const BlogEditor = () => {
     if (!textEditor.isReady) {
       const editor = new EditorJS({
         holderId: "textEditor",
-        data: { blocks: content },
+        data: { blocks: Array.isArray(content) ? content : [] },
         tools: Tools,
         placeholder: "Start writing your blog...",
         onReady: () => {
@@ -117,7 +121,7 @@ const BlogEditor = () => {
 
         await axios.post(
           `${import.meta.env.VITE_SERVER_DOMAIN}/create-blog`,
-          blogObj,
+          { ...blogObj, id: blog_id },
           {
             headers: { Authorization: `Bearer ${access_token}` },
           }

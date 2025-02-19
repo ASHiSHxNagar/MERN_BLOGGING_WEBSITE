@@ -23,6 +23,8 @@ const BlogPage = () => {
 
   const [blog, setBlog] = useState(blogStructure);
   const [loading, setLoading] = useState(true);
+  const [similarBlogs, setSimilarBlogs] = useState(null);
+  const [isLikedByUser, setIsLikedByUser] = useState(false);
 
   let {
     title,
@@ -34,16 +36,14 @@ const BlogPage = () => {
     publishedAt,
   } = blog;
 
-  const [similarBlogs, setSimilarBlogs] = useState(null);
-
   const fetchBlog = () => {
     axios
-      .post(import.meta.env.VITE_SERVER_DOMAIN + "/get-blog", { blog_id })
+      .post(`${import.meta.env.VITE_SERVER_DOMAIN}/get-blog`, { blog_id })
       .then(({ data: { blog } }) => {
         setBlog(blog);
         console.log(blog.content);
         axios
-          .post(import.meta.env.VITE_SERVER_DOMAIN + "/search-blogs", {
+          .post(`${import.meta.env.VITE_SERVER_DOMAIN}/search-blogs`, {
             tag: blog.tags[0],
             limit: 6,
             eliminate_blog: blog_id,
@@ -55,7 +55,7 @@ const BlogPage = () => {
         setLoading(false);
       })
       .catch((err) => {
-        console.log(err);
+        console.error("Error fetching blog:", err);
         setLoading(false);
       });
   };
@@ -76,7 +76,9 @@ const BlogPage = () => {
       {loading ? (
         <Loader />
       ) : (
-        <BlogContext.Provider value={{ blog, setBlog }}>
+        <BlogContext.Provider
+          value={{ blog, setBlog, isLikedByUser, setIsLikedByUser }}
+        >
           <div className="max-w-[900px] center py-10 max-lg:px-[5vw]">
             <img src={banner} className="aspect-video" />
 
@@ -100,16 +102,18 @@ const BlogPage = () => {
             </div>
 
             <BlogInteraction />
-            {/* 
+
             <div className="my-12 font-gelasio blog-page-content">
-              {content[0].blocks.map((block, i) => {
-                return (
-                  <div key={i} className="my-4 md:my-8">
-                    <BlogContent block={block} />
-                  </div>
-                );
-              })}
-            </div> */}
+              {Array.isArray(content) &&
+                content.length > 0 &&
+                content.map((block, i) => {
+                  return (
+                    <div key={i} className="my-4 md:my-8">
+                      <BlogContent block={block} />
+                    </div>
+                  );
+                })}
+            </div>
 
             <BlogInteraction />
             {similarBlogs != null && similarBlogs.length ? (
