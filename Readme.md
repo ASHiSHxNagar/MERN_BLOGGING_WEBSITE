@@ -6,6 +6,9 @@ Fork this repo of "MERN Blogging Website" to start following the video tutorial.
 
 Checkout website demo - [Demo](https://youtu.be/J7BGuuuvDDk)
 
+19-02-2025 stopped following playlist from part-4 2:02:52 hours 
+more update of this repo soon
+
 This website features include -
 
 1. Modern Blog Editor using Editor JS.
