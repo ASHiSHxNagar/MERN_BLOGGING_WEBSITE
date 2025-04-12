@@ -58,26 +58,23 @@ const Navbar = () => {
           <i className="fi fi-rr-search absolute right-[10%]  md:pointer-events-none  md:left-5 top-1/2 -translate-y-1/2 text-xl text-dark-grey "></i>
         </div>
 
-        <div className="flex items-center gap-3 md:gap-6 ml-auto">
+        <div className="flex items-center gap-3 ml-auto md:gap-6">
           <button
-            className="md:hidden bg-grey w-12 h-12 rounded-full flex items-center justify-center"
+            className="flex items-center justify-center w-12 h-12 rounded-full md:hidden bg-grey"
             onClick={() => setSearchBoxVisibility((currentVal) => !currentVal)}
           >
-            <i className="fi fi-rr-search  text-xl pt-1"></i>
+            <i className="pt-1 text-xl fi fi-rr-search"></i>
           </button>
 
-          <Link
-            to="/editor"
-            className="hidden  md:flex gap-2 link  rounded-full"
-          >
+          <Link to="/editor" className="hidden gap-2 rounded-full md:flex link">
             <i className="fi fi-rr-file-edit"></i>
             <p>Write</p>
           </Link>
           {access_token ? (
             <>
               <Link to="/dashboard/notification">
-                <button className="w-12 h-12 rounded-full bg-grey relative hover:bg-black/10">
-                  <i className="fi fi-rr-bell text-2xl block mt-1"></i>
+                <button className="relative w-12 h-12 rounded-full bg-grey hover:bg-black/10">
+                  <i className="block mt-1 text-2xl fi fi-rr-bell"></i>
                 </button>
               </Link>
 
@@ -89,7 +86,7 @@ const Navbar = () => {
                 <button className="w-12 h-12 mt-1">
                   <img
                     src={profile_img}
-                    className="w-full h-full object-cover rounded-full "
+                    className="object-cover w-full h-full rounded-full "
                   />
                 </button>
               </div>
@@ -97,11 +94,11 @@ const Navbar = () => {
             </>
           ) : (
             <>
-              <Link className="btn-dark py-2" to="/signin">
+              <Link className="py-2 btn-dark" to="/signin">
                 {" "}
                 Sign In{" "}
               </Link>
-              <Link className="btn-light py-2 hidden md:block" to="/signup">
+              <Link className="hidden py-2 btn-light md:block" to="/signup">
                 {" "}
                 Sign Up{" "}
               </Link>
@@ -109,6 +106,16 @@ const Navbar = () => {
           )}
         </div>
       </nav>
+
+      <div className="w-full py-3 text-center bg-yellow-300">
+        <p className="text-sm font-medium text-black">
+          📢 Check out our latest offers and discounts!{" "}
+          <a href="#" className="text-blue-600 underline">
+            Learn More
+          </a>
+        </p>
+      </div>
+
       <Outlet />
     </>
   );

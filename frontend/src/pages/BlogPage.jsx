@@ -25,6 +25,16 @@ const BlogPage = () => {
   const [loading, setLoading] = useState(true);
   const [similarBlogs, setSimilarBlogs] = useState(null);
   const [isLikedByUser, setIsLikedByUser] = useState(false);
+  const [showAd, setShowAd] = useState(true); // State to manage ad visibility
+  const [showBlinkingAd, setShowBlinkingAd] = useState(true); // State to manage blinking ad visibility
+
+  const closeAd = () => {
+    setShowAd(false);
+  };
+
+  const closeBlinkingAd = () => {
+    setShowBlinkingAd(false);
+  };
 
   let {
     title,
@@ -73,6 +83,59 @@ const BlogPage = () => {
 
   return (
     <PageAnimation>
+      {showAd && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-90">
+          <div className="max-w-md p-8 text-center rounded-lg shadow-2xl bg-gradient-to-r from-purple-500 to-indigo-500">
+            <h2 className="mb-6 text-2xl font-extrabold text-white">
+              🎉 Limited Time Offer!
+            </h2>
+            <p className="mb-6 text-lg text-white">
+              Upgrade to <strong>Premium Membership</strong> for only{" "}
+              <span className="text-yellow-300">$30</span> instead of{" "}
+              <span className="line-through">$60</span>!
+            </p>
+            <button
+              onClick={closeAd}
+              className="px-6 py-3 text-lg font-semibold text-purple-700 bg-yellow-300 rounded-full hover:bg-yellow-400"
+            >
+              Close Ad
+            </button>
+          </div>
+        </div>
+      )}
+
+      {showBlinkingAd && (
+        <div
+          className="fixed z-50 p-2 text-sm font-bold text-white rounded-lg cursor-pointer bottom-5 right-5"
+          style={{
+            animation: "colorChange 0.2s infinite",
+            backgroundColor: "red", // Initial color
+          }}
+        >
+          <div className="flex items-center justify-between">
+            <span>Remove Ads</span>
+            <button
+              onClick={closeBlinkingAd}
+              className="flex items-center justify-center w-4 h-4 ml-2 text-xs font-bold text-black bg-white rounded-full"
+            >
+              ✕
+            </button>
+          </div>
+        </div>
+      )}
+
+      <style>
+        {`
+          @keyframes colorChange {
+            0% { background-color: red; }
+            25% { background-color: blue; }
+            50% { background-color: green; }
+            75% { background-color: yellow; }
+            100% { background-color: red; }
+          }
+        `}
+      </style>
+
       {loading ? (
         <Loader />
       ) : (
@@ -84,8 +147,8 @@ const BlogPage = () => {
 
             <div className="mt-12">
               <h2>{title}</h2>
-              <div className=" flex max-sm:flex-col justify-between mt-8 ">
-                <div className="flex gap-5 items-start">
+              <div className="flex justify-between mt-8 max-sm:flex-col">
+                <div className="flex items-start gap-5">
                   <img src={profile_img} className="w-12 h-12 rounded-full" />
                   <p className="capitalize">
                     {fullname}
@@ -95,7 +158,7 @@ const BlogPage = () => {
                     </Link>
                   </p>
                 </div>
-                <p className="text-dark-grey opacity-75 max-sm:mt-6 max-sm:ml-12 max-sm:pl-5">
+                <p className="opacity-75 text-dark-grey max-sm:mt-6 max-sm:ml-12 max-sm:pl-5">
                   Published on {getDay(publishedAt)}
                 </p>
               </div>
@@ -118,7 +181,7 @@ const BlogPage = () => {
             <BlogInteraction />
             {similarBlogs != null && similarBlogs.length ? (
               <>
-                <h1 className="text-2xl mt-14 mb-10 font-medium">
+                <h1 className="mb-10 text-2xl font-medium mt-14">
                   Similar Blogs
                 </h1>
                 {similarBlogs.map((blog, i) => {
