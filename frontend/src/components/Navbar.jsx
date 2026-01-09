@@ -107,15 +107,7 @@ const Navbar = () => {
         </div>
       </nav>
 
-      <div className="w-full py-3 text-center bg-yellow-300">
-        <p className="text-sm font-medium text-black">
-          📢 Check out our latest offers and discounts!{" "}
-          <a href="#" className="text-blue-600 underline">
-            Learn More
-          </a>
-        </p>
-      </div>
-
+          
       <Outlet />
     </>
   );

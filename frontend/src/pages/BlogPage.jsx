@@ -25,16 +25,6 @@ const BlogPage = () => {
   const [loading, setLoading] = useState(true);
   const [similarBlogs, setSimilarBlogs] = useState(null);
   const [isLikedByUser, setIsLikedByUser] = useState(false);
-  const [showAd, setShowAd] = useState(true); // State to manage ad visibility
-  const [showBlinkingAd, setShowBlinkingAd] = useState(true); // State to manage blinking ad visibility
-
-  const closeAd = () => {
-    setShowAd(false);
-  };
-
-  const closeBlinkingAd = () => {
-    setShowBlinkingAd(false);
-  };
 
   let {
     title,
@@ -83,49 +73,8 @@ const BlogPage = () => {
 
   return (
     <PageAnimation>
-      {showAd && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-90">
-          <div className="max-w-md p-8 text-center rounded-lg shadow-2xl bg-gradient-to-r from-purple-500 to-indigo-500">
-            <h2 className="mb-6 text-2xl font-extrabold text-white">
-              🎉 Limited Time Offer!
-            </h2>
-            <p className="mb-6 text-lg text-white">
-              Upgrade to <strong>Premium Membership</strong> for only{" "}
-              <span className="text-yellow-300">$30</span> instead of{" "}
-              <span className="line-through">$60</span>!
-            </p>
-            <button
-              onClick={closeAd}
-              className="px-6 py-3 text-lg font-semibold text-purple-700 bg-yellow-300 rounded-full hover:bg-yellow-400"
-            >
-              Close Ad
-            </button>
-          </div>
-        </div>
-      )}
-
-      {showBlinkingAd && (
-        <div
-          className="fixed z-50 p-2 text-sm font-bold text-white rounded-lg cursor-pointer bottom-5 right-5"
-          style={{
-            animation: "colorChange 0.2s infinite",
-            backgroundColor: "red", // Initial color
-          }}
-        >
-          <div className="flex items-center justify-between">
-            <span>Remove Ads</span>
-            <button
-              onClick={closeBlinkingAd}
-              className="flex items-center justify-center w-4 h-4 ml-2 text-xs font-bold text-black bg-white rounded-full"
-            >
-              ✕
-            </button>
-          </div>
-        </div>
-      )}
-
       <style>
-        {`
+        {`  
           @keyframes colorChange {
             0% { background-color: red; }
             25% { background-color: blue; }

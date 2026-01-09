@@ -6,13 +6,17 @@ import { nanoid } from 'nanoid';
 import jwt from 'jsonwebtoken';
 import cors from 'cors';
 import admin from 'firebase-admin';
-import serviceAccountKey from './mern-blogging-yt-c12b2-firebase-adminsdk-fbsvc-fbdb68d261.json' assert { type: "json" };
+import { createRequire } from 'module';
 import { getAuth } from 'firebase-admin/auth';
 import aws from 'aws-sdk';
 // schema below
 import User from './Schema/User.js';
 import Blog from './Schema/Blog.js';
 import Notification from './Schema/Notification.js';
+
+// Load JSON without import assertions to support older Node runtimes
+const require = createRequire(import.meta.url);
+const serviceAccountKey = require('./mern-blogging-yt-c12b2-firebase-adminsdk-fbsvc-fbdb68d261.json');
 
 const app = express();
 const PORT = 3000;
