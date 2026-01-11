@@ -46,7 +46,7 @@ let corsOptions;
 if (process.env.NODE_ENV === "production") {
   // Uncomment for production (vercel deployed app)
   corsOptions = {
-    origin: "https://mern-blogging-website-1bp5e0b78-ashishxnagars-projects.vercel.app/",
+    origin: "https://mern-blogging-website-1bp5e0b78-ashishxnagars-projects.vercel.app",
     methods: "GET,POST,PUT,DELETE,OPTIONS", // Added OPTIONS for preflight
     credentials: true,
   };
