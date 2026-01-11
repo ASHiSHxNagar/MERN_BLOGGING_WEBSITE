@@ -19,7 +19,7 @@ const require = createRequire(import.meta.url);
 const serviceAccountKey = require('./mern-blogging-yt-c12b2-firebase-adminsdk-fbsvc-fbdb68d261.json');
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 5000;
 
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccountKey)
@@ -30,7 +30,10 @@ mongoose.connect(process.env.MONGO_URI, {
 });
 
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+  origin: process.env.FRONTEND_URL || "http://localhost:5173",
+  credentials: true
+}));
 
 // Set COOP header
 app.use((req, res, next) => {

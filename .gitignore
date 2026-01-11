@@ -9,6 +9,7 @@ bower_components/
 .pnp.js
 .pnp.cjs
 
+
 # Build artifacts
 dist/
 build/
@@ -50,6 +51,8 @@ lerna-debug.log*
 .env.development.local
 .env.test.local
 .env.production.local
+frontend/.env
+backend/.env
 
 # Testing
 coverage/
