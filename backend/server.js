@@ -41,27 +41,25 @@ mongoose.connect(process.env.MONGO_URI, {
 });
 
 app.use(express.json());
-const allowedOrigins = [
-  "http://localhost:5173",
-  process.env.FRONTEND_URL
-];
 
-app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
-  credentials: true
-}));
+let corsOptions;
+if (process.env.NODE_ENV === "production") {
+  // Uncomment for production (vercel deployed app)
+  corsOptions = {
+    origin: "https://mern-blogging-website-1bp5e0b78-ashishxnagars-projects.vercel.app/",
+    methods: "GET,POST,PUT,DELETE,OPTIONS", // Added OPTIONS for preflight
+    credentials: true,
+  };
+} else {
+  // Uncomment for development (local environment)
+  corsOptions = {
+    origin: ["http://localhost:5173", "http://localhost:3000"], // Allow Vite port and backend port
+    methods: "GET,POST,PUT,DELETE,OPTIONS", // Added OPTIONS for preflight
+    credentials: true,
+  };
+}
 
-// Set COOP header
-app.use((req, res, next) => {
-    res.setHeader('Cross-Origin-Opener-Policy', 'same-origin');
-    next();
-});
+app.use(cors(corsOptions));
 
 // setting up s3 bucket
 const s3 = new aws.S3({
