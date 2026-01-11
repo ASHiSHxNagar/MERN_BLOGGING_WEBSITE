@@ -9,7 +9,7 @@ import LoadMore from "../components/LoadMore";
 import { useState } from "react";
 import axios from "axios";
 import filterPaginationData from "../common/FilterPaginationData";
-import UserCard from "../components/UserCard";
+import UserCard from "../components/Usercard";
 
 const Search = () => {
   let { query } = useParams();
@@ -82,7 +82,7 @@ const Search = () => {
   };
 
   return (
-    <section className="h-cover flex justify-center gap-10">
+    <section className="flex justify-center gap-10 h-cover">
       <div className="w-full">
         <InpageNavigation
           routes={[`search Results for "${query}"`, "Accounts Matched"]}
@@ -113,8 +113,8 @@ const Search = () => {
       </div>
 
       <div className="min-w-[40%] lg:min-w-[350px] max-w-min border-1 border-grey pl-8 pt-3 max-md:hidden">
-        <h1 className="font-medium text-xl mb-8">
-          User releted to search <i className="fi fi-rr-user mt-1 "></i>
+        <h1 className="mb-8 text-xl font-medium">
+          User releted to search <i className="mt-1 fi fi-rr-user "></i>
         </h1>
         <UserCardWrapper />
       </div>

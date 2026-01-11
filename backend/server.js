@@ -71,6 +71,11 @@ const generateUploadURL = async () => {
     });
 };
 
+app.get("/", (req, res) => {
+  res.send("Server is running 🚀");
+});
+
+
 const verifyJWT = (req, res, next) => {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
