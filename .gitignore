@@ -23,6 +23,8 @@ out/
 .turbo/
 .eslintcache
 *.tsbuildinfo
+*.json
+mern-blogging-yt-c12b2-firebase-adminsdk-fbsvc-fbdb68d261.json
 
 # Cache directories
 .cache/
